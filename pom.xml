@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.lowagie</groupId>
-	<artifactId>itext</artifactId>
-	<packaging>jar</packaging>
+	<artifactId>itext-parent</artifactId>
+	<packaging>pom</packaging>
 	<name>iText, a Free Java-PDF library</name>
-	<version>releasenumber</version>
+	<version>2.1.8-SNAPSHOT</version>
 	<description>iText, a free Java-PDF library</description>
 	<url>http://www.lowagie.com/iText/</url>
+	<modules>
+		<module>itext-core</module>
+	</modules>
 	<mailingLists>
 		<mailingList>
 			<name>iText Questions</name>
-			<subscribe>
-				http://lists.sourceforge.net/lists/listinfo/itext-questions
-			</subscribe>
+			<subscribe>http://lists.sourceforge.net/lists/listinfo/itext-questions</subscribe>
 			<post>itext-questions@lists.sourceforge.net</post>
-			<archive>
-				http://news.gmane.org/gmane.comp.java.lib.itext.general
-			</archive>
+			<archive>http://news.gmane.org/gmane.comp.java.lib.itext.general</archive>
 			<otherArchives>
 				<otherArchive>http://www.nabble.com/iText---General-f2701.html</otherArchive>
 				<otherArchive>http://www.junlu.com/2.html</otherArchive>
@@ -61,38 +60,35 @@
 			</comments>
 		</license>
 	</licenses>
-	<scm>
-		<connection>scm:svn:http://itext.svn.sourceforge.net/svnroot/itext</connection>
-		<url>http://itext.svn.sourceforge.net/viewvc/itext</url>
-	</scm>
-	<dependencies>
-		<dependency>
-			<groupId>bouncycastle</groupId>
-			<artifactId>bcmail-bc.jdk</artifactId>
-			<version>bc.version</version>
-		</dependency>
-		<dependency>
-			<groupId>bouncycastle</groupId>
-			<artifactId>bcprov-bc.jdk</artifactId>
-			<version>bc.version</version>
-		</dependency>
-		<dependency>
-			<groupId>bouncycastle</groupId>
-			<artifactId>bctsp-bc.jdk</artifactId>
-			<version>bc.version</version>
-		</dependency>
-	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>bouncycastle</groupId>
+				<artifactId>bcmail-jdk14</artifactId>
+				<version>138</version>
+			</dependency>
+			<dependency>
+				<groupId>bouncycastle</groupId>
+				<artifactId>bcprov-jdk14</artifactId>
+				<version>138</version>
+			</dependency>
+			<dependency>
+				<groupId>bouncycastle</groupId>
+				<artifactId>bctsp-jdk14</artifactId>
+				<version>138</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.5</version>
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>
-								com.lowagie.tools.ToolboxAvailable
-							</mainClass>
+							<mainClass>com.lowagie.tools.ToolboxAvailable</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
