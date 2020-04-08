@@ -48,8 +48,6 @@
  */
 
 package com.lowagie.text.pdf;
-import java.io.IOException;
-import java.io.OutputStream;
 
 /**
  * <CODE>PdfObject</CODE> is the abstract superclass of all PDF objects.
@@ -60,15 +58,6 @@ import java.io.OutputStream;
  * All these basic PDF objects are described in the 'Portable Document Format
  * Reference Manual version 1.3' Chapter 4 (pages 37-54).
  *
- * @see		PdfNull
- * @see		PdfBoolean
- * @see		PdfNumber
- * @see		PdfString
- * @see		PdfName
- * @see		PdfArray
- * @see		PdfDictionary
- * @see		PdfStream
- * @see		PdfIndirectReference
  */
 public abstract class PdfObject {
 
@@ -121,9 +110,6 @@ public abstract class PdfObject {
     /** The type of this <CODE>PdfObject</CODE> */
     protected int type;
 
-    /** Holds the indirect reference. */
-    protected PRIndirectReference indRef;
-
     // CONSTRUCTORS
 
     /**
@@ -163,19 +149,6 @@ public abstract class PdfObject {
     }
 
     // methods dealing with the content of this object
-
-    /**
-     * Writes the PDF representation of this <CODE>PdfObject</CODE> as an
-     * array of <CODE>byte</CODE>s to the writer.
-     * 
-     * @param writer for backwards compatibility
-     * @param os     The <CODE>OutputStream</CODE> to write the bytes to.
-     * @throws IOException
-     */
-    public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
-        if (bytes != null)
-            os.write(bytes);
-    }
 
     /**
      * Returns the <CODE>String</CODE>-representation of this
@@ -377,23 +350,5 @@ public abstract class PdfObject {
      */
     public boolean isIndirect() {
         return (type == INDIRECT);
-    }
-
-    /**
-     * Get the indirect reference
-     * 
-     * @return A <CODE>PdfIndirectReference</CODE>
-     */
-    public PRIndirectReference getIndRef() {
-        return indRef;
-    }
-
-    /**
-     * Set the indirect reference
-     * 
-     * @param indRef New value as a <CODE>PdfIndirectReference</CODE>
-     */
-    public void setIndRef(PRIndirectReference indRef) {
-        this.indRef = indRef;
     }
 }

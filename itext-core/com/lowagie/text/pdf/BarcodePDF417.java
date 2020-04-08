@@ -53,10 +53,6 @@ import java.awt.Color;
 import java.awt.image.MemoryImageSource;
 import java.util.ArrayList;
 
-import com.lowagie.text.BadElementException;
-import com.lowagie.text.Image;
-import com.lowagie.text.pdf.codec.CCITTG4Encoder;
-
 /** Generates the 2D barcode PDF417. Supports dimensioning auto-sizing, fixed
  * and variable sizes, automatic and manual error levels, raw codeword input,
  * codeword size optimization and bitmap inversion. The output can
@@ -879,18 +875,6 @@ public class BarcodePDF417 {
         calculateErrorCorrection(lenCodewords);
         lenCodewords = tot;
         outPaintCode();
-    }
-
-    /** Gets an <CODE>Image</CODE> with the barcode. The image will have to be
-     * scaled in the Y direction by <CODE>yHeight</CODE>for the barcode
-     * to have the right printing aspect.
-     * @return the barcode <CODE>Image</CODE>
-     * @throws BadElementException on error
-     */    
-    public Image getImage() throws BadElementException {
-        paintCode();
-        byte g4[] = CCITTG4Encoder.compress(outBits, bitColumns, codeRows);
-        return Image.getInstance(bitColumns, codeRows, false, Image.CCITTG4, (options & PDF417_INVERT_BITMAP) == 0 ? 0 : Image.CCITT_BLACKIS1, g4, null);
     }
 
     /** Creates a <CODE>java.awt.Image</CODE>.
