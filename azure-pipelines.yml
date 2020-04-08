@@ -46,7 +46,7 @@ steps:
     options: '-B -Drevision=$(patchBaseVersion)'
     codeCoverageToolOption: 'None'
     sonarQubeRunAnalysis: false
-  condition: eq(variables['Build.SourceBranch'])
+  condition: eq(variables['Build.SourceBranch'], 'master')
 
   # pull request builds are executing only the install maven goal
 - task: Maven@3
@@ -65,6 +65,5 @@ steps:
     codeCoverageToolOption: 'None'
     sonarQubeRunAnalysis: false
   condition: startsWith(variables['Build.SourceBranch'], 'refs/pull')
-
 
 
