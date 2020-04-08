@@ -55,7 +55,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
-import com.lowagie.text.ExceptionConverter;
 /** Supports fast encodings for winansi and PDFDocEncoding.
  * Supports conversions from CJK encodings to CID.
  * Supports custom encodings.
@@ -65,6 +64,14 @@ public class PdfEncodings {
     protected static final int CIDNONE = 0;
     protected static final int CIDRANGE = 1;
     protected static final int CIDCHAR = 2;
+
+    public static final String WINANSI = "Cp1252";
+
+    /** The fake CID code that represents a newline. */
+    public static final char CID_NEWLINE = '\u7fff';
+
+    /** The path to the font resources. */
+    public static final String RESOURCE_PATH = "com/lowagie/text/pdf/fonts/";
 
     static final char winansiByteToChar[] = {
         0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 
@@ -151,7 +158,7 @@ public class PdfEncodings {
                 return b;
         }
         IntHashtable hash = null;
-        if (encoding.equals(BaseFont.WINANSI))
+        if (encoding.equals(WINANSI))
             hash = winansi;
         else if (encoding.equals(PdfObject.TEXT_PDFDOCENCODING))
             hash = pdfEncoding;
@@ -195,7 +202,7 @@ public class PdfEncodings {
             return text.getBytes(encoding);
         }
         catch (UnsupportedEncodingException e) {
-            throw new ExceptionConverter(e);
+            throw new IllegalStateException(e);
         }
     }
     
@@ -215,7 +222,7 @@ public class PdfEncodings {
                 return b;
         }
         IntHashtable hash = null;
-        if (encoding.equals(BaseFont.WINANSI))
+        if (encoding.equals(WINANSI))
             hash = winansi;
         else if (encoding.equals(PdfObject.TEXT_PDFDOCENCODING))
             hash = pdfEncoding;
@@ -243,7 +250,7 @@ public class PdfEncodings {
             return String.valueOf(char1).getBytes(encoding);
         }
         catch (UnsupportedEncodingException e) {
-            throw new ExceptionConverter(e);
+            throw new IllegalStateException(e);
         }
     }
     
@@ -269,7 +276,7 @@ public class PdfEncodings {
                 return text;
         }
         char ch[] = null;
-        if (encoding.equals(BaseFont.WINANSI))
+        if (encoding.equals(WINANSI))
             ch = winansiByteToChar;
         else if (encoding.equals(PdfObject.TEXT_PDFDOCENCODING))
             ch = pdfEncodingByteToChar;
@@ -285,7 +292,7 @@ public class PdfEncodings {
             return new String(bytes, encoding);
         }
         catch (UnsupportedEncodingException e) {
-            throw new ExceptionConverter(e);
+            throw new IllegalStateException(e);
         }
     }
     
@@ -347,7 +354,7 @@ public class PdfEncodings {
             }
         }
         catch (IOException e) {
-            throw new ExceptionConverter(e);
+            throw new IllegalStateException(e);
         }        
     }
     
@@ -392,7 +399,7 @@ public class PdfEncodings {
             return decodeSequence(seq, start, length, planes);
         }
         catch (IOException e) {
-            throw new ExceptionConverter(e);
+            throw new IllegalStateException(e);
         }        
     }
     
@@ -420,15 +427,15 @@ public class PdfEncodings {
         readCmap(name, planes);
         if (newline != null) {
             for (int k = 0; k < newline.length; ++k)
-                encodeSequence(newline[k].length, newline[k], BaseFont.CID_NEWLINE, planes);
+                encodeSequence(newline[k].length, newline[k], CID_NEWLINE, planes);
         }
         char ret[][] = new char[planes.size()][];
         return (char[][])planes.toArray(ret);
     }
     
     static void readCmap(String name, ArrayList planes) throws IOException {
-        String fullName = BaseFont.RESOURCE_PATH + "cmaps/" + name;
-        InputStream in = BaseFont.getResourceStream(fullName);
+        String fullName = RESOURCE_PATH + "cmaps/" + name;
+        InputStream in = getResourceStream(fullName);
         if (in == null)
             throw new IOException("The Cmap " + name + " was not found.");
         encodeStream(in, planes);
@@ -793,5 +800,46 @@ public class PdfEncodings {
             return null;
         }
         
+    }
+
+    /** Gets the font resources.
+     * @param key the full name of the resource
+     * @return the <CODE>InputStream</CODE> to get the resource or
+     * <CODE>null</CODE> if not found
+     */
+    public static InputStream getResourceStream(String key) {
+        return getResourceStream(key, null);
+    }
+
+    /** Gets the font resources.
+     * @param key the full name of the resource
+     * @param loader the ClassLoader to load the resource or null to try the ones available
+     * @return the <CODE>InputStream</CODE> to get the resource or
+     * <CODE>null</CODE> if not found
+     */
+    public static InputStream getResourceStream(String key, ClassLoader loader) {
+        if (key.startsWith("/"))
+            key = key.substring(1);
+        InputStream is = null;
+        if (loader != null) {
+            is = loader.getResourceAsStream(key);
+            if (is != null)
+                return is;
+        }
+        // Try to use Context Class Loader to load the properties file.
+        try {
+            ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+            if (contextClassLoader != null) {
+                is = contextClassLoader.getResourceAsStream(key);
+            }
+        } catch (Throwable e) {}
+
+        if (is == null) {
+            is = PdfEncodings.class.getResourceAsStream("/" + key);
+        }
+        if (is == null) {
+            is = ClassLoader.getSystemResourceAsStream(key);
+        }
+        return is;
     }
 }
