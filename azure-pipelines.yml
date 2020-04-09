@@ -31,7 +31,7 @@ steps:
     options: '-B -Drevision=$(patchBaseVersion)-$(Build.SourceBranchName)-SNAPSHOT'
     codeCoverageToolOption: 'None'
     sonarQubeRunAnalysis: false
-  condition: and(not(startsWith(variables['Build.SourceBranch'], 'refs/pull')),ne(variables['Build.SourceBranch'], 'master'))
+  condition: and(not(startsWith(variables['Build.SourceBranch'], 'refs/pull')), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
 
   # master build is doing a release (no SNAPSHOT set). This requires to properly update the version
   # in this pipeline step each time one wants to do a release...
@@ -50,7 +50,7 @@ steps:
     options: '-B -Drevision=$(patchBaseVersion)'
     codeCoverageToolOption: 'None'
     sonarQubeRunAnalysis: false
-  condition: eq(variables['Build.SourceBranch'], 'master')
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
 
   # pull request builds are executing only the install maven goal
 - task: Maven@3
